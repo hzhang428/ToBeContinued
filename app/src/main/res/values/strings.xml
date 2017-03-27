@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ToBeContinued</string>
+    <string name="check_box_text">Task 1</string>
 </resources>
