@@ -1,5 +1,6 @@
 package com.example.haozhang.tobecontinued;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +18,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQ_CODE_TODO_EDIT = 100;
+
     private List<ToDo> toDos;
+    private ToDoListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,22 +33,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUI(@NonNull List<ToDo> todos) {
 
-//        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.crappy_List);
-//        linearLayout.removeAllViews();
-//
-//        ToDoListAdapter toDoListAdapter = new ToDoListAdapter(this, todos);
-//
-//        for (int i = 0; i < todos.size(); i++) {
-//            ListView listView = (ListView) findViewById(R.id.main_list_view);
-//        }
-        ListView listView = (ListView) findViewById(R.id.main_list_view);
-        listView.setAdapter(new ToDoListAdapter(this, todos));
+        adapter = new ToDoListAdapter(this, todos);
+        ((ListView) findViewById(R.id.main_list_view)).setAdapter(adapter);
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast toast = Toast.makeText(MainActivity.this, "Fab clicked", Toast.LENGTH_SHORT);
-                toast.show();
+                Intent intent = new Intent(MainActivity.this, ToDoEditActivity.class);
+                startActivityForResult(intent, REQ_CODE_TODO_EDIT);
             }
         });
     }
