@@ -17,6 +17,7 @@
             android:layout_height="@dimen/todo_edit_title_margin_top"/>
 
         <EditText
+            android:id="@+id/todo_detail_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/spacing_medium"
@@ -44,6 +45,7 @@
             android:layout_marginBottom="@dimen/spacing_small">
 
             <CheckBox
+                android:id="@+id/todo_detail_checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="-4.8dp"
@@ -71,6 +73,7 @@
                 android:contentDescription="@null"/>
 
             <TextView
+                android:id="@+id/todo_detail_datePick"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -80,6 +83,7 @@
                 tool:text="Wed, Jun 16, 2017"/>
 
             <TextView
+                android:id="@+id/todo_detail_timePick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/spacing_medium"
@@ -90,6 +94,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/todo_detail_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_small"
