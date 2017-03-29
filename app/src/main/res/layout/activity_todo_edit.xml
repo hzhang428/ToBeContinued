@@ -49,15 +49,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="-4.8dp"
-                android:layout_marginRight="-4.6dp"
-                tool:ignore="RtlHardcoded" />
+                android:layout_marginRight="-4.6dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/spacing_small"
                 android:textSize="@dimen/todo_edit_body_font_size"
-                tool:text="Completed"/>
+                android:text="@string/Completed"/>
 
         </LinearLayout>
         

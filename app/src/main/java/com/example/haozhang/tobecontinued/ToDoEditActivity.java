@@ -1,12 +1,16 @@
 package com.example.haozhang.tobecontinued;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -69,19 +73,50 @@ public class ToDoEditActivity extends AppCompatActivity implements
         timeTv = (TextView) findViewById(R.id.todo_detail_timePick);
         completeCb = (CheckBox) findViewById(R.id.todo_detail_checkBox);
 
+        if (data != null) {
+            todoText.setText(data.text);
+            completeCb.setChecked(data.done);
+        }
+
         if (remindDate != null) {
-            dateTv.setText(DateUtil.dateToString(remindDate));
-            timeTv.setText(DateUtil.dateToString(remindDate));
+            dateTv.setText(DateUtil.dateToStringDate(remindDate));
+            timeTv.setText(DateUtil.dateToStringTime(remindDate));
         } else {
             dateTv.setText(R.string.set_date);
             timeTv.setText(R.string.set_time);
         }
         setDatePicker();
+        setSaveButton();
     }
 
     private void setActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Edit");
+    }
+
+    private void setSaveButton() {
+        FloatingActionButton fabBtn = (FloatingActionButton) findViewById(R.id.todo_detail_done);
+        fabBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveAndExit();
+            }
+        });
+    }
+
+    private void saveAndExit() {
+        if (data == null) {
+            data = new ToDo(todoText.getText().toString(), remindDate);
+        } else {
+            data.text = todoText.getText().toString();
+            data.remindDate = remindDate;
+        }
+        data.done = completeCb.isChecked();
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(KEY_TODO, data);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 
     private void setDatePicker() {
@@ -122,7 +157,7 @@ public class ToDoEditActivity extends AppCompatActivity implements
         c.set(year, month, day);
 
         remindDate = c.getTime();
-        dateTv.setText(DateUtil.dateToString(remindDate));
+        dateTv.setText(DateUtil.dateToStringDate(remindDate));
     }
 
     @Override
@@ -132,7 +167,7 @@ public class ToDoEditActivity extends AppCompatActivity implements
         c.set(Calendar.MINUTE, minute);
 
         remindDate = c.getTime();
-        timeTv.setText(DateUtil.dateToString(remindDate));
+        timeTv.setText(DateUtil.dateToStringTime(remindDate));
     }
 
     private Calendar getCalenderFromRemindDate() {

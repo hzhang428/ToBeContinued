@@ -16,12 +16,14 @@ import java.util.zip.DataFormatException;
 
 public class DateUtil {
 
-    private static DateFormat dateFormat= new SimpleDateFormat("yyyy MM dd HH:mm", Locale.getDefault());
+    //Web, Jun 06, 2017
+    private static DateFormat dateFormat = new SimpleDateFormat("yyyy MM dd HH:mm", Locale.getDefault());
 
-    public static String dateToString(@NonNull Date date) {
-        return dateFormat.format(date);
-    }
+    private static DateFormat dateFormatTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+    private static DateFormat dateFormatDate = new SimpleDateFormat("EEE, MMM dd, yyyy", Locale.getDefault());
+
+    @NonNull
     public static Date stringToDate(@NonNull String string) {
         try {
             return dateFormat.parse(string);
@@ -29,5 +31,20 @@ public class DateUtil {
             e.printStackTrace();
             return Calendar.getInstance().getTime();
         }
+    }
+
+    @NonNull
+    public static String dateToString(@NonNull Date date) {
+        return dateFormat.format(date);
+    }
+
+    @NonNull
+    public static String dateToStringDate(@NonNull Date date) {
+        return dateFormatDate.format(date);
+    }
+
+    @NonNull
+    public static String dateToStringTime(@NonNull Date date) {
+        return dateFormatTime.format(date);
     }
 }
