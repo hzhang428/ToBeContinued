@@ -1,24 +1,27 @@
 package com.example.haozhang.tobecontinued;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.haozhang.tobecontinued.models.ToDo;
-import com.example.haozhang.tobecontinued.utils.DateUtil;
+import com.example.haozhang.tobecontinued.utils.ModelUtils;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQ_CODE_TODO_EDIT = 100;
+    public static final int REQ_CODE_TODO_EDIT = 100;
+
+    private static final String MODEL_TODO = "todo_items";
 
     private List<ToDo> toDos;
     private ToDoListAdapter adapter;
@@ -28,28 +31,59 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupUI(fakeData());
-    }
-
-    private void setupUI(@NonNull List<ToDo> todos) {
-
-        adapter = new ToDoListAdapter(this, todos);
-        ((ListView) findViewById(R.id.main_list_view)).setAdapter(adapter);
-
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ToDoEditActivity.class);
                 startActivityForResult(intent, REQ_CODE_TODO_EDIT);
             }
         });
+
+        loadData();
+
+        adapter = new ToDoListAdapter(this, toDos);
+        ((ListView) findViewById(R.id.main_list_view)).setAdapter(adapter);
     }
 
-    private List<ToDo> fakeData() {
-        List<ToDo> list = new ArrayList<>();
-        for (int i = 0; i < 500; i++) {
-            list.add(new ToDo("Task" + i, DateUtil.stringToDate("2017 03 28 14:00")));
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == REQ_CODE_TODO_EDIT) {
+            ToDo todo = data.getParcelableExtra(ToDoEditActivity.KEY_TODO);
+            Log.i("todo_debug", (todo == null) + " after save");
+            updateToDo(todo);
         }
-        return list;
+    }
+
+    private void updateToDo(ToDo todo) {
+        boolean found = false;
+        for (int i = 0; i < toDos.size(); i++) {
+            if (TextUtils.equals(todo.id, toDos.get(i).id)) {
+                toDos.set(i, todo);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            toDos.add(todo);
+        }
+        adapter.notifyDataSetChanged();
+        ModelUtils.save(this, MODEL_TODO, toDos);
+    }
+
+    public void updateToDo(int index, boolean done) {
+        toDos.get(index).done = done;
+
+        adapter.notifyDataSetChanged();
+        ModelUtils.save(this, MODEL_TODO, toDos);
+    }
+
+    private void loadData() {
+        toDos = ModelUtils.read(this, MODEL_TODO, new TypeToken<List<ToDo>>(){});
+        if (toDos == null) {
+            Log.i("toDosxxxx", (toDos == null) + "");
+            toDos = new ArrayList<>();
+        }
     }
 }
