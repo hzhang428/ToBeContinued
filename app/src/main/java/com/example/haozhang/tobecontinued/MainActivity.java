@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.haozhang.tobecontinued.models.ToDo;
 import com.example.haozhang.tobecontinued.utils.ModelUtils;
@@ -50,10 +51,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQ_CODE_TODO_EDIT) {
-            ToDo todo = data.getParcelableExtra(ToDoEditActivity.KEY_TODO);
-            Log.i("todo_debug", (todo == null) + " after save");
-            updateToDo(todo);
+            String todo_id = data.getStringExtra(ToDoEditActivity.KEY_TODO_ID);
+            if (todo_id != null) {
+                deleteToDo(todo_id);
+            } else {
+                ToDo todo = data.getParcelableExtra(ToDoEditActivity.KEY_TODO);
+                updateToDo(todo);
+            }
         }
+    }
+
+    private void deleteToDo(String id) {
+        for (int i = 0; i < toDos.size(); i++) {
+            ToDo todo = toDos.get(i);
+            if (TextUtils.equals(todo.id, id)) {
+                toDos.remove(i);
+                break;
+            }
+        }
+        adapter.notifyDataSetChanged();
+        ModelUtils.save(this, MODEL_TODO, toDos);
     }
 
     private void updateToDo(ToDo todo) {
@@ -82,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     private void loadData() {
         toDos = ModelUtils.read(this, MODEL_TODO, new TypeToken<List<ToDo>>(){});
         if (toDos == null) {
-            Log.i("toDosxxxx", (toDos == null) + "");
             toDos = new ArrayList<>();
         }
     }
