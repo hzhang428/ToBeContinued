@@ -5,13 +5,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import android.widget.TimePicker;
 
 import com.example.haozhang.tobecontinued.models.ToDo;
 import com.example.haozhang.tobecontinued.utils.DateUtil;
+import com.example.haozhang.tobecontinued.utils.UIUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -104,7 +108,29 @@ public class ToDoEditActivity extends AppCompatActivity implements
             timeTv.setText(R.string.set_time);
         }
         setDatePicker();
+        setupCheckBox();
         setSaveButton();
+    }
+
+    private void setupCheckBox() {
+        UIUtils.setTextViewStrikeLine(todoText, completeCb.isChecked());
+        todoText.setTextColor(completeCb.isChecked() ? Color.GRAY : Color.WHITE);
+
+        completeCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                UIUtils.setTextViewStrikeLine(todoText, b);
+                todoText.setTextColor(b ? Color.GRAY : Color.WHITE);
+            }
+        });
+
+        View wrapper = findViewById(R.id.todo_detail_checkBox_view);
+        wrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                completeCb.setChecked(!completeCb.isChecked());
+            }
+        });
     }
 
     private void setActionBar() {

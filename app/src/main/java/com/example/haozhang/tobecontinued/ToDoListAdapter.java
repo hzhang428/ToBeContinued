@@ -1,6 +1,7 @@
 package com.example.haozhang.tobecontinued;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,11 +10,13 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.haozhang.tobecontinued.models.ToDo;
+import com.example.haozhang.tobecontinued.utils.UIUtils;
 
 import java.util.List;
 
 /**
  * Created by haozhang on 3/27/17.
+ *
  */
 
 public class ToDoListAdapter extends BaseAdapter{
@@ -55,10 +58,11 @@ public class ToDoListAdapter extends BaseAdapter{
         } else {
             vh = (ViewHolder) convertView.getTag();
         }
-
         final ToDo todo = (ToDo) getItem(position);
         vh.todoText.setText(todo.text);
         vh.checkBox.setChecked(todo.done);
+        UIUtils.setTextViewStrikeLine(vh.todoText, todo.done);
+        vh.todoText.setTextColor(vh.checkBox.isChecked() ? Color.LTGRAY : Color.GRAY);
 
         vh.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
