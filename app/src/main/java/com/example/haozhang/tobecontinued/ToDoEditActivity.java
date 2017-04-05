@@ -5,15 +5,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,12 +22,14 @@ import android.widget.TimePicker;
 
 import com.example.haozhang.tobecontinued.models.ToDo;
 import com.example.haozhang.tobecontinued.utils.DateUtil;
+import com.example.haozhang.tobecontinued.utils.UIUtils;
 
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by haozhang on 3/28/17.
+ *
  */
 
 public class ToDoEditActivity extends AppCompatActivity implements
@@ -34,6 +37,7 @@ public class ToDoEditActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener{
 
     public static final String KEY_TODO = "todo_item";
+    public static final String KEY_TODO_ID = "todo_id";
 
     private EditText todoText;
     private TextView dateTv;
@@ -52,7 +56,11 @@ public class ToDoEditActivity extends AppCompatActivity implements
         } else {
             remindDate = data.remindDate;
         }
-        setupUI();
+        if (data == null) {
+            setupUI(true);
+        } else {
+            setupUI(false);
+        }
     }
 
     @Override
@@ -64,9 +72,23 @@ public class ToDoEditActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupUI() {
+    private void setupUI(boolean isCreate) {
         setContentView(R.layout.activity_todo_edit);
         setActionBar();
+
+        if (isCreate) {
+            findViewById(R.id.todo_detail_delete).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.todo_detail_delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent result = new Intent();
+                    result.putExtra(KEY_TODO_ID, data.id);
+                    setResult(Activity.RESULT_OK, result);
+                    finish();
+                }
+            });
+        }
 
         todoText = (EditText) findViewById(R.id.todo_detail_edit_text);
         dateTv = (TextView) findViewById(R.id.todo_detail_datePick);
@@ -86,7 +108,29 @@ public class ToDoEditActivity extends AppCompatActivity implements
             timeTv.setText(R.string.set_time);
         }
         setDatePicker();
+        setupCheckBox();
         setSaveButton();
+    }
+
+    private void setupCheckBox() {
+        UIUtils.setTextViewStrikeLine(todoText, completeCb.isChecked());
+        todoText.setTextColor(completeCb.isChecked() ? Color.GRAY : Color.WHITE);
+
+        completeCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                UIUtils.setTextViewStrikeLine(todoText, b);
+                todoText.setTextColor(b ? Color.GRAY : Color.WHITE);
+            }
+        });
+
+        View wrapper = findViewById(R.id.todo_detail_checkBox_view);
+        wrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                completeCb.setChecked(!completeCb.isChecked());
+            }
+        });
     }
 
     private void setActionBar() {
